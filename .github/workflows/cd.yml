@@ -1,0 +1,40 @@
+name: Backend CD
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+
+jobs:
+  prepare-environment:
+    runs-on: self-hosted
+    if: ${{ github.event.pull_request.merged }}
+    steps:
+      - name: Checkout into Mobile Back
+        uses: actions/checkout@v4
+
+  deploy:
+    runs-on: self-hosted
+    if: ${{ github.event.pull_request.merged }}
+    needs: prepare-environment
+    steps:
+      - name: Up other services
+        env:
+          MINIO_ROOT_USER: ${{ secrets.MINIO_ROOT_USER }}
+          MINIO_ROOT_PASSWORD: ${{ secrets.MINIO_ROOT_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          PGADMIN_DEFAULT_EMAIL: ${{ secrets.PGADMIN_DEFAULT_EMAIL }}
+          PGADMIN_DEFAULT_PASSWORD: ${{ secrets.PGADMIN_DEFAULT_PASSWORD }}
+        run: docker-compose up -d --scale back=0
+
+      - name: Recreate backend service
+        env:
+          HOST: ${{secrets.HOST}}
+          DB_URL: postgresql://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@postgres:${{secrets.DB_PORT}}/${{ secrets.DB_NAME }}
+          MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
+          MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
+          MINIO_URL: ${{ secrets.MINIO_ENDPOINT }}
+        run: docker-compose up -d --force-recreate --no-deps --build back
