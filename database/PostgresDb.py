@@ -9,7 +9,7 @@ load_dotenv()
 # Получение URL базы данных из переменной окружения
 URL_DATABASE = os.getenv('DB_URL')
 # Создание движка SQLAlchemy
-engine = create_engine(URL_DATABASE)
+engine = create_engine(URL_DATABASE, pool_pre_ping=True)
 # Создание сессии для взаимодействия с базой данных
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # Определение базовой модели
