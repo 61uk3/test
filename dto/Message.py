@@ -1,11 +1,9 @@
+from uuid import UUID
 
 from pydantic import BaseModel
 
 
-class Message(BaseModel):
-    id_отправителя:int
-    Сообщение:str
-    Дата: str
-
-
-
+class Shortmes(BaseModel):
+    id_sender: UUID
+    date_send: str
+    message:str

@@ -11,12 +11,12 @@ from sqlalchemy.orm import Session
 import dto.Photo
 import services.ItemsPhotosService
 from database.PostgresDb import get_connection
-from dto.User import RegUser
+from dto.User import RegUser, UpUser
 from models.Models import Users
 from models.Models import Towns
 from models.Models import Photos
 from services.AuthService import verify_jwt_token
-from services.MinioService import save_photo
+from services.MinioService import save_photo, delete_photos
 
 # используется для получения токена доступа
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth")
@@ -72,3 +72,30 @@ def get_current_user(con: con_dependency, token: str = Depends(oauth2_scheme)):
     if not user:
         raise HTTPException(status_code=400, detail="User not found")
     return user
+
+async def uppdate_user(
+        con:Session,
+        user: Users,
+        new_user:UpUser,
+        town: str):
+    try:
+
+        # Обновление значений пользователя
+        user.name = new_user.name
+        user.contact = new_user.contact
+        user.login = new_user.login
+
+        town_id = con.query(Towns.id).filter(Towns.town == town).scalar()
+        user.id_town = town_id
+
+        con.query(Photos).filter(Photos.id_lots == user.id).delete()
+        await delete_photos(user.id)
+
+
+        con.commit()
+        return user
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to update user: {e}")
+
+

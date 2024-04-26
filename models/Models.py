@@ -46,25 +46,24 @@ class Users(Base):
     photo = Column(String)
 
     items = relationship('Items', back_populates='user')
-    #chats = relationship('Chats', back_populates='user')
 
-# class Messages(Base):
-#     __tablename__ = 'Сообщения'
-#     id_отправителя = Column(UUID,ForeignKey("Пользователи.id_пользователя"))
-#     Дата = Column(Date)
-#     Сообщение = Column(String)
-#     id_чата_Чаты = Column(UUID,ForeignKey("Чаты.id_чата"))
 
+class Messages(Base):
+    __tablename__ = 'messages'
+    id = Column(UUID, primary_key=True,index=True)
+    id_sender = Column(UUID,ForeignKey("users.id"))
+    date = Column(Date)
+    message = Column(String)
+    id_Chats = Column(UUID,ForeignKey("chats.id"))
 
 
 class Chats(Base):
-    __tablename__ = 'Чаты'
-    id_чата = Column(UUID, primary_key=True,index=True)
-    id_пользователя1 = Column(UUID,ForeignKey("Пользователи.id_пользователя"))
-    id_пользователя2 = Column(UUID,ForeignKey("Пользователи.id_пользователя"))
-    id_лота_Лоты =Column(UUID,ForeignKey("Лоты.id_лота"))
+    __tablename__ = 'chats'
+    id = Column(UUID, primary_key=True,index=True)
+    id_user1 = Column(UUID,ForeignKey("users.id"))
+    id_user2 = Column(UUID,ForeignKey("users.id"))
+    id_Lots =Column(UUID,ForeignKey("lots.id"))
 
-    # user = relationship('Users', back_populates='chats')
 
 class Photos(Base):
     __tablename__ = 'photos'

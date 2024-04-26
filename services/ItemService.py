@@ -41,10 +41,11 @@ async def get_items_by_user_id(userId: UUID, con: Session):
     return ret_list
 
 
-# async def delete_item(id: UUID, con: Session, userId: UUID):
-#     con.query(Items).filter(Items.id == id and Items.user_id == userId).delete()
-#     con.commit()
-#     await delete_photos(id)Unexpected argument
+async def delete_item(id: UUID, con: Session, userId: UUID):
+    con.query(Items).filter(Items.id == id and Items.id_Users == userId).delete()
+    con.query(Photos).filter(Photos.id_lots == id).delete()
+    con.commit()
+    await delete_photos(id)
 
 async def get_item_by_id(id: UUID, con: Session):
 
@@ -202,8 +203,8 @@ async def create_item(con: Session, lot: DtoItem.InputItem, user_id: UUID, cat: 
     try:
         item_id = uuid.uuid1()
         #repository.query(Towns.id).filter(town == Towns.town)
-        idcat = con.query(Categories.id).filter(cat == Categories.category)
-        idcon = con.query(Conditions.id).filter(cond == Conditions.condition)
+        idcat = con.query(Categories.id).filter(cat == Categories.category).scalar()
+        idcon = con.query(Conditions.id).filter(cond == Conditions.condition).scalar()
 
         item = Items(
             id=item_id,
@@ -225,6 +226,35 @@ async def create_item(con: Session, lot: DtoItem.InputItem, user_id: UUID, cat: 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to create item: {e}")
 
+
+async def update_item(con: Session, item_id: UUID, lot: DtoItem.InputItem, cat: str, cond: str):
+    try:
+        item = con.query(Items).filter(Items.id == item_id).first()
+        if item is None:
+            raise HTTPException(status_code=404, detail="Item not found")
+
+        # Обновление значений лота
+        item.name = lot.name
+        item.description = lot.description
+        item.address = lot.address
+
+        # Обновление категории и условия
+        idcat = con.query(Categories.id).filter(cat == Categories.category).scalar()
+        idcon = con.query(Conditions.id).filter(cond == Conditions.condition).scalar()
+
+        item.id_Categories = idcat
+        item.id_Conditions = idcon
+
+        con.query(Photos).filter(Photos.id_lots == item_id).delete()
+        await delete_photos(item_id)
+
+        con.commit()
+        return item_id
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to update item: {e}")
+
+
 async def add_photos_to_item(con: Session, item_id: UUID, photos: List[UploadFile]):
     try:
         for photo in photos:
@@ -238,6 +268,8 @@ async def add_photos_to_item(con: Session, item_id: UUID, photos: List[UploadFil
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to add photos to item: {e}")
         print(e)
+
+
 
 # async def post_item(
 #         lot: DtoItem.InputItem,

@@ -60,7 +60,6 @@ async def get_item_by_id(id: UUID, con: con_dependency):
 async def post_item(
         con: con_dependency,
         lot_json: str = Form(...),
-        photos: List[UploadFile] = File(...),
         cat: str = Form(...),
         cond: str = Form(...),
         user: Users = Depends(get_current_user)
@@ -70,16 +69,39 @@ async def post_item(
 
     item_id = await ItemServices.create_item(con, lot, user.id, cat, cond)
 
-    await ItemServices.add_photos_to_item(con, item_id, photos)
-
     return item_id
+
+@router.post('/{id}/photos', tags=['items'])
+async def post_photos_for_item(
+        id: UUID,
+        con: con_dependency,
+        photos: List[UploadFile] = File(...),
+):
+    await ItemServices.add_photos_to_item(con, id, photos)
+    return {"message": "Photos added successfully"}
+
 
 @router.get('/user/{id}', tags=['items'], response_model=None)
 async def get_item_by_id_user(id: UUID, con: con_dependency):
     return await ItemServices.get_items_by_user_id(id, con)
 
-#
-#
-# @router.delete('/{id}', tags=['items'])
-# async def delete_item(id: UUID, con: con_dependency, user: Users = Depends(get_current_user)):
-#     return await ItemServices.delete_item(id, con, user.id)
+@router.put('/{id}',tags=['items'])
+async def update_item(
+        con: con_dependency,
+        id: UUID,
+        lot_json: str = Form(...),
+        photos: List[UploadFile] = File(...),
+        cat: str = Form(...),
+        cond: str = Form(...)):
+    lotdata = json.loads(lot_json)
+    lot = ItemDto.InputItem(**lotdata)
+    await ItemServices.update_item(con, id, lot, cat, cond)
+    # Добавление новых фотографий
+    await ItemServices.add_photos_to_item(con, id, photos)
+
+    return {"message": "Item updated successfully"}
+
+
+@router.delete('/{id}', tags=['items'])
+async def delete_item(id: UUID, con: con_dependency, user: Users = Depends(get_current_user)):
+    return await ItemServices.delete_item(id, con, user.id)
