@@ -7,7 +7,6 @@ from pydantic import ValidationError
 from sqlalchemy.orm import Session
 from starlette import status
 from fastapi import File, UploadFile
-import aiofiles
 import services.ItemService as ItemServices
 from database.PostgresDb import get_connection
 from dto import Item as ItemDto
