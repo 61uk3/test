@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 import jwt
+from jwt import encode,decode
 
 SECRET_KEY = "my_secret_key"
 ALGORITHM = "HS256"
@@ -12,13 +13,13 @@ def create_jwt_token(data: dict):
     expiration = datetime.utcnow() + EXPIRATION_TIME
 
     data.update({"exp": expiration})
-    token = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
+    token = encode(data, SECRET_KEY, algorithm=ALGORITHM)
     return token
 
 # функция для проверки JWT токена
 def verify_jwt_token(token: str):
     try:
-        decoded_data = jwt.decode(token,
+        decoded_data = decode(token,
                                   SECRET_KEY,
                                   algorithms=[ALGORITHM])
         return decoded_data
