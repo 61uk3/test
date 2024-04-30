@@ -37,7 +37,7 @@ async def register_user(user: RegUser,
         password=user.password,
         photo=photo.filename,
         contact=user.contact,
-        datereg=datetime.now(),
+        datereg=str(datetime.now())[:-7],
         id_town= townid
     )
 
