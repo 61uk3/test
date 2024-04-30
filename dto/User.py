@@ -32,7 +32,6 @@ class ChatWithUser(BaseModel):
 
 class ResponseUser:
     login: str
-    photo: str
     name: str
     password: str
     contact: str
@@ -41,13 +40,11 @@ class ResponseUser:
     items: list[ShortItem]
 
     def __init__(self,
-    photo: str,
     name: str,
     contact: str,
     datereg: str,
     town: str,
     items: list[ShortItem]):
-        self.photo=photo
         self.name=name
         self.contact=contact
         self.datereg=datereg

@@ -25,7 +25,6 @@ con_dependency = Annotated[Session, Depends(get_connection)]
 
 async def register_user(user: RegUser,
                         town:str,
-                        photo:UploadFile,
                         repository: Session) -> Users:
 
     uid = uuid.uuid1()
@@ -35,7 +34,6 @@ async def register_user(user: RegUser,
         name=user.name,
         login=user.login,
         password=user.password,
-        photo=photo.filename,
         contact=user.contact,
         datereg=str(datetime.now())[:-7],
         id_town= townid
@@ -43,17 +41,11 @@ async def register_user(user: RegUser,
 
     try:
         repository.add(add_user)
-        await save_photo(uid, photo)
-        repository.add(Photos(
-            id=uuid.uuid1(),
-            photo=photo.filename,
-            id_lots = uid
-        ))
-        repository.commit()
+
     except Exception as e:
         print(e)
 
-    return add_user
+    return add_user.id
 
 
 def get_user_by_id(userId: str, repository: Session) -> type[Users] | None:

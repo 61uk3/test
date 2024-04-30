@@ -1,6 +1,6 @@
 from typing import Annotated
 from uuid import UUID
-
+from typing import Dict, List
 from fastapi import APIRouter, Depends
 from fastapi import APIRouter, Depends, File, Form, HTTPException
 import json
@@ -9,7 +9,7 @@ from fastapi import HTTPException, UploadFile
 from database.PostgresDb import get_connection
 from dto.User import ResponseUser, UpUser
 from models.Models import Users, Towns
-from services import UsersService
+from services import UsersService,ItemService
 from services.ItemService import get_items_by_user_id,add_photos_to_item
 from services.UsersService import get_current_user
 
@@ -29,6 +29,31 @@ async def get_user(con: con_dependency, id: UUID):
         town= con.query(Towns).filter(user.id_town == Towns.id).scalar(),
         items=items
     )
+
+
+# @router.post('/', tags=['items'])
+# async def post_item(
+#         con: con_dependency,
+#         lot_json: str = Form(...),
+#         cat: str = Form(...),
+#         cond: str = Form(...),
+#         user: Users = Depends(get_current_user)
+# ):
+#     lotdata = json.loads(lot_json)
+#     lot = ItemDto.InputItem(**lotdata)
+#
+#     item_id = await ItemServices.create_item(con, lot, user.id, cat, cond)
+#
+#     return item_id
+#
+@router.post('/{id}/photos', tags=['user'])
+async def post_photos_for_item(
+        con: con_dependency,
+        id: UUID,
+        photos: List[UploadFile] = File(...),
+):
+    await add_photos_to_item(con, id, photos)
+    return {"message": "Photos added successfully"}
 
 @router.put('',tags=['user'])
 async def update_inf(
