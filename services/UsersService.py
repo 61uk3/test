@@ -41,6 +41,7 @@ async def register_user(user: RegUser,
 
     try:
         repository.add(add_user)
+        repository.commit()
 
     except Exception as e:
         print(e)
