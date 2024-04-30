@@ -28,25 +28,29 @@ async def register_user(user: RegUser,
                         repository: Session) -> Users:
 
     uid = uuid.uuid1()
-    townid = repository.query(Towns.id).filter(town == Towns.town).first()
+    townid = str(repository.query(Towns.id).filter(town == Towns.town).first())
     add_user = Users(
         id=uid,
         name=user.name,
         login=user.login,
         password=user.password,
         contact=user.contact,
-        datereg=str(datetime.now())[:-7],
-        id_town= townid
+        id_town=townid[townid.find("'") + 1:townid.rfind("'")],
+        datereg=str(datetime.now().date())
+
     )
 
     try:
         repository.add(add_user)
         repository.commit()
+        return add_user.id
+
 
     except Exception as e:
-        print(e)
 
-    return add_user.id
+        repository.rollback()
+
+        raise HTTPException(status_code=500, detail=f"Failed to register user: {e}")
 
 
 def get_user_by_id(userId: str, repository: Session) -> type[Users] | None:

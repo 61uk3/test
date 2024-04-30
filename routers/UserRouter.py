@@ -50,7 +50,7 @@ async def get_user(con: con_dependency, id: UUID):
 async def post_photos_for_item(
         con: con_dependency,
         id: UUID,
-        photos: List[UploadFile] = File(...),
+        photos: List[UploadFile] = File(...)
 ):
     await add_photos_to_item(con, id, photos)
     return {"message": "Photos added successfully"}

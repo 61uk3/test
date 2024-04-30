@@ -43,7 +43,6 @@ class Users(Base):
     contact = Column(String(30))
     datereg = Column(Date)
     id_town = Column(UUID)
-    photo = Column(String)
 
     items = relationship('Items', back_populates='user')
 
