@@ -255,14 +255,14 @@ async def update_item(con: Session, item_id: UUID, lot: DtoItem.InputItem, cat: 
         raise HTTPException(status_code=500, detail=f"Failed to update item: {e}")
 
 
-async def add_photos_to_item(con: Session, item_id: UUID, photos: List[UploadFile]):
+async def add_photos_to_item(con: Session, id: UUID, photos: List[UploadFile]):
     try:
         for photo in photos:
-            await save_photo(item_id, photo)
+            await save_photo(id, photo)
             con.add(Photos(
                 id=uuid.uuid1(),
                 photo=photo.filename,
-                id_lots=item_id
+                id_lots=id
             ))
         con.commit()
     except Exception as e:

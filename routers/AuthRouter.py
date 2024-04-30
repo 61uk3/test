@@ -21,13 +21,12 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 @router.post('/register')
 async def register_user(con: con_dependency,
                         user_json: str = Form(...),
-                        town:str = Form(...),
-                        photo: UploadFile = File(...)
+                        town:str = Form(...)
                         ):
     user_data = json.loads(user_json)
     user = RegUser(**user_data)
     user.password = pwd_context.hash(user.password)
-    return await UserService.register_user(user,town,photo, con)
+    return await UserService.register_user(user,town, con)
 
 
 @router.post('/auth')
