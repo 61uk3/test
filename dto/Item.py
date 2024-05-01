@@ -26,6 +26,7 @@ class CardItem:
     id: UUID
     name: str
     description: str
+    address: str
     date: str
     category: str
     condition: str
@@ -38,6 +39,7 @@ class CardItem:
                 id: UUID,
                 name: str,
                 description: str,
+                address: str,
                 date: str,
                 category: str,
                 condition: str,
@@ -48,6 +50,7 @@ class CardItem:
         self.id = id
         self.name = name
         self.description = description
+        self.address = address
         self.date = date
         self.condition = condition
         self.category = category
