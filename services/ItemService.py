@@ -9,7 +9,7 @@ from typing import Dict, List
 from dto import Item as DtoItem
 from dto.Item import CardItem, ShortItem
 
-from models.Models import Items
+from models.Models import Items, Towns
 from models.Models import Photos
 from models.Models import Categories, Conditions
 
@@ -20,7 +20,7 @@ from services.UsersService import get_user_by_id
 
 
 async def get_items(con: Session):
-    answered_list = con.query(Items).all()
+    answered_list = con.query(Items).filter(Items.active == True).all()
     ret_list = []
     for item in answered_list:
         photo = get_first_photo_by_id(item.id, con)
@@ -56,7 +56,8 @@ async def get_item_by_id(id: UUID, con: Session):
 
     list_photos = await get_all_photos_by_id(id, con)
     name = get_user_by_id(item.id_Users, con).name
-    u_id= get_user_by_id(item.id_Users, con).id
+    user= get_user_by_id(item.id_Users, con)
+    town = con.query(Towns.town).filter(Towns.id == user.id_town).first()[0]
     cond_k = con.query(Conditions.condition).filter(item.id_Conditions == Conditions.id).first()
     cat_k = con.query(Categories.category).filter(item.id_Categories == Categories.id).first()
     cond = cond_k[0]
@@ -65,11 +66,12 @@ async def get_item_by_id(id: UUID, con: Session):
         id=item.id,
         name=item.name,
         description=item.description,
+        address = town +", " + item.address,
         date=str(item.date),
         category=cat,
         condition=cond,
         user_name=name,
-        user_id=u_id,
+        user_id=user.id,
         photos=list_photos
     )
 #06a514c4-ff25-11ee-8f6d-975f61d225b4
