@@ -80,7 +80,6 @@ async def uppdate_user(
         # Обновление значений пользователя
         user.name = new_user.name
         user.contact = new_user.contact
-        user.login = new_user.login
 
         town_id = con.query(Towns.id).filter(Towns.town == town).scalar()
         user.id_town = town_id

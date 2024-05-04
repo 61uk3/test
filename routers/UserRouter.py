@@ -88,6 +88,8 @@ async def get_user(con: con_dependency, user: Users = Depends(get_current_user))
         items=items
     )
 
+
+
 @router.put('/photo/{id}', tags=['user'])
 async def update_photo(
         con: con_dependency,
