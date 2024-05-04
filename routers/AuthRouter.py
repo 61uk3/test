@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
 import services.UsersService as UserService
 from database.PostgresDb import get_connection
 from dto.User import AuthUser, RegUser
+from models.Models import Users
 from services.AuthService import *
 
 router = APIRouter()
@@ -16,7 +17,20 @@ con_dependency = Annotated[Session, Depends(get_connection)]
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-
+@router.put('/password')
+async def update_pas(
+        con: con_dependency,
+        user: Users = Depends(UserService.get_current_user),
+        old_pass : str = Form(...),
+        new_pass: str = Form(...)
+):
+    if pwd_context.verify(old_pass, user.password):
+        new_hashed_password = pwd_context.hash(new_pass)
+        user.password = new_hashed_password
+        con.commit()
+        return True
+    else:
+        return False
 
 @router.post('/register')
 async def register_user(con: con_dependency,

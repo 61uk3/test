@@ -17,7 +17,6 @@ class AuthUser(BaseModel):
 
 class UpUser(BaseModel):
     name: str
-    login: str
     contact: str
 
 class ChatWithUser(BaseModel):
