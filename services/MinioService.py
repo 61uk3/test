@@ -1,6 +1,8 @@
 import os
+from datetime import timedelta
 from uuid import UUID
 
+from aiohttp import FormData
 from fastapi import UploadFile
 from miniopy_async import Minio
 
@@ -19,7 +21,11 @@ client = Minio(
 
 # Функция для получения фотографии с заданным именем из бакета MinIO
 async def get_photo(name: str):
-    return await client.presigned_get_object(BUCKET_NAME, name)
+    return await client.presigned_get_object(BUCKET_NAME,
+                                             name,
+                                             expires=timedelta(seconds=604800),
+                                             # Время жизни URL в секундах (например, 7 дней)
+                                             response_headers={"response-content-disposition": "inline"})
 
 
 # Функция для удаления фотографий, связанных с определенным элементом (Item)
@@ -33,6 +39,14 @@ async def delete_photos(itemId: UUID):
 
 # Функция для сохранения фотографии в бакет MinIO
 async def save_photo(itemId: UUID, photo: UploadFile):
+    # Формирование объекта FormData для отправки файла
+    form_data = FormData()
+    form_data.add_field('file',
+                        photo.file,
+                        filename=photo.filename,
+                        content_type= 'image/jpg')  # Устанавливаем правильный Content-Type
+
     # Загрузка файла в бакет с помощью метода put_object
     # Имя файла формируется путем объединения идентификатора элемента и имени файла фотографии
-    await client.put_object(BUCKET_NAME, f'{itemId}/{photo.filename}', data=photo.file, length=photo.size)
+    object_key = f'{itemId}/{photo.filename}'
+    await client.put_object(BUCKET_NAME, object_key, data=form_data)
