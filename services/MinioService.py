@@ -37,5 +37,6 @@ async def save_photo(itemId: UUID, photo: UploadFile):
     # Имя файла формируется путем объединения идентификатора элемента и имени файла фотографии
     await client.put_object(BUCKET_NAME, f'{itemId}/{photo.filename}',
                             length=photo.size,
-                            data=photo.file
+                            data=photo.file,
+                            content_type=photo.content_type
                             )
