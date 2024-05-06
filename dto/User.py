@@ -20,6 +20,7 @@ class UpUser(BaseModel):
     contact: str
 
 class ChatWithUser(BaseModel):
+    id: uuid.UUID
     user_id: uuid.UUID
     user_name: str
     user_photo: str
