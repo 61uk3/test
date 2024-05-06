@@ -19,7 +19,7 @@ client = Minio(
 
 # Функция для получения фотографии с заданным именем из бакета MinIO
 async def get_photo(name: str):
-    return await client.presigned_get_object(BUCKET_NAME, name)
+    return await client.presigned_get_object(BUCKET_NAME, name, response_headers={"response-content-disposition": "inline"})
 
 
 # Функция для удаления фотографий, связанных с определенным элементом (Item)
