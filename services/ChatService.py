@@ -70,6 +70,25 @@ async def createchat(con:Session,
     con.commit()
     return  chat
 
+
+async def from_lot(con:Session,
+                   lot_id:UUID,
+                   user_id:UUID):
+    item = con.query(Items).filter(Items.id == lot_id).first()
+    user = con.query(Users).filter(Users.id == user_id).first()
+    if con.query(Chats).filter((Chats.id_Lots == lot_id) and
+                               ((Chats.id_user1 == user_id) or Chats.id_user2 == user_id) and
+                               ((Chats.id_user1 == item.id_Users) or Chats.id_user2 == item.id_Users)).first():
+
+        chat = con.query(Chats).filter((Chats.id_Lots == lot_id) and
+                               ((Chats.id_user1 == user_id) or Chats.id_user2 == user_id) and
+                               ((Chats.id_user1 == item.id_Users) or Chats.id_user2 == item.id_Users)).first()
+    else:
+        chat = await createchat(con, user_id, item.id_Users, lot_id)
+
+    return await get_mes(con,chat.id,user)
+
+
 async def send(con:Session,
                     lot_id:UUID,
                     message:str,
@@ -107,7 +126,6 @@ async def get_mes(
 
     chat = con.query(Chats).filter(Chats.id == id_chat).first()
 
-
     user_info = con.query(Users).filter((Users.id == chat.id_user1) | (Users.id == chat.id_user2)).all()
 
     for us in user_info:
@@ -135,6 +153,7 @@ async def get_mes(
         messages_list.append(message_data)
 
     chat_with_user = ChatWithUser(
+        id=chat.id,
         user_id=another_user.id,
         user_name=another_user.name,
         user_photo=user_photo,

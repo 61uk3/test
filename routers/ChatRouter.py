@@ -37,3 +37,10 @@ async def get_chat_messages(
         id: UUID,
         user: Users = Depends(get_current_user)):
     return await ChatService.get_mes(con,id,user)
+
+@router.post('/create/{id}', tags=['chat'], response_model=None)
+async def send_message(con: con_dependency,
+                       id: UUID,
+                       user: Users = Depends(get_current_user)):
+    return await ChatService.from_lot(con, id, user.id)
+

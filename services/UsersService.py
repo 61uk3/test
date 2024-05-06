@@ -25,10 +25,12 @@ con_dependency = Annotated[Session, Depends(get_connection)]
 
 async def register_user(user: RegUser,
                         town:str,
-                        repository: Session) -> Users:
+                        con: Session) -> Users:
 
     uid = uuid.uuid1()
-    townid = str(repository.query(Towns.id).filter(town == Towns.town).first())
+    if (con.query(Users.login).filter(user.login==Users.login)) != None:
+        return False
+    townid = str(con.query(Towns.id).filter(town == Towns.town).first())
     add_user = Users(
         id=uid,
         name=user.name,
@@ -41,14 +43,14 @@ async def register_user(user: RegUser,
     )
 
     try:
-        repository.add(add_user)
-        repository.commit()
+        con.add(add_user)
+        con.commit()
         return add_user.id
 
 
     except Exception as e:
 
-        repository.rollback()
+        con.rollback()
 
         raise HTTPException(status_code=500, detail=f"Failed to register user: {e}")
 
