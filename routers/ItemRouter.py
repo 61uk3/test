@@ -84,7 +84,7 @@ async def post_photos_for_item(
 async def get_item_by_id_user(id: UUID, con: con_dependency):
     return await ItemServices.get_items_by_user_id(id, con)
 
-@router.put('/{id}',tags=['items'])
+@router.post('/up/{id}',tags=['items'])
 async def update_item(
         con: con_dependency,
         id: UUID,
