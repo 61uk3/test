@@ -61,7 +61,7 @@ async def post_photos_for_item(
     await add_photos_to_item(con, id, photos)
     return {"message": "Photos added successfully"}
 
-@router.put('',tags=['user'])
+@router.post('/up/',tags=['user'])
 async def update_inf(
         con: con_dependency,
         user_json: str = Form(...),
@@ -88,15 +88,6 @@ async def get_user(con: con_dependency, user: Users = Depends(get_current_user))
         items=items
     )
 
-
-
-@router.put('/photo/{id}', tags=['user'])
-async def update_photo(
-        con: con_dependency,
-        id: UUID,
-        photo:list[UploadFile]=Form(...)
-):
-    return  await add_photos_to_item(con, id, photo)
 
     # /@router.put('/{id}',tags=['items'])
     # user_data = json.loads(user_json)

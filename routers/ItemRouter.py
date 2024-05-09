@@ -100,6 +100,15 @@ async def update_item(
 
     return {"message": "Item updated successfully"}
 
+@router.post('/inactive/{id}',tags=['items'])
+async def update_item(
+        con: con_dependency,
+        id: UUID
+        ):
+
+    await ItemServices.update_active(con, id)
+    return {"message": "Active updated successfully"}
+
 
 @router.delete('/{id}', tags=['items'])
 async def delete_item(id: UUID, con: con_dependency, user: Users = Depends(get_current_user)):

@@ -228,6 +228,20 @@ async def create_item(con: Session, lot: DtoItem.InputItem, user_id: UUID, cat: 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to create item: {e}")
 
+async def update_active(con: Session, item_id: UUID):
+    try:
+        item = con.query(Items).filter(Items.id == item_id).first()
+        if item.active:
+            item.active = False
+        else:
+             item.active = True
+
+        con.commit()
+        return item.active
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to update item: {e}")
+
 
 async def update_item(con: Session, item_id: UUID, lot: DtoItem.InputItem, cat: str, cond: str):
     try:
