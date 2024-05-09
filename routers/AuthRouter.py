@@ -17,7 +17,7 @@ con_dependency = Annotated[Session, Depends(get_connection)]
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-@router.put('/password')
+@router.post('/password')
 async def update_pas(
         con: con_dependency,
         user: Users = Depends(UserService.get_current_user),
