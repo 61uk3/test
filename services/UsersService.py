@@ -28,8 +28,10 @@ async def register_user(user: RegUser,
                         con: Session) -> Users:
 
     uid = uuid.uuid1()
-    if (con.query(Users.login).filter(user.login==Users.login)) != None:
-        return False
+    if (con.query(Users.login).filter(user.login==Users.login).first()) != None:
+        return "login"
+    if (con.query(Users.contact).filter(user.contact==Users.contact).first()) != None:
+        return "contact"
     townid = str(con.query(Towns.id).filter(town == Towns.town).first())
     add_user = Users(
         id=uid,
