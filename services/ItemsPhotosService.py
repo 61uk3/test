@@ -12,7 +12,7 @@ async def get_all_photos_by_id(id: UUID, con: Session) -> list[Photo]:
     list_photos = con.query(Photos).filter(Photos.id_lots == id).all()
     res_list = []
     for item in list_photos:
-        photo_url = await get_photo(f"{item.id}/{item.photo}")
+        photo_url = await get_photo(f"{item.id_lots}/{item.photo}")
         res_list.append(Photo(id=item.id, photo=photo_url))
 
     return res_list
