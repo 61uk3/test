@@ -164,3 +164,23 @@ async def get_mes(
     )
 
     return chat_with_user
+
+async def get_only_mes(
+        con:Session,
+        id_chat:UUID):
+
+    messages = con.query(Messages).filter(Messages.id_Chats == id_chat).order_by(Messages.date).all()
+    messages_list = []
+
+    for message in messages:
+        message_data = Shortmes(
+            id_sender=message.id_sender,
+            date_send=str(message.date),
+            message=message.message
+        )
+
+        messages_list.append(message_data)
+
+
+
+    return messages_list
