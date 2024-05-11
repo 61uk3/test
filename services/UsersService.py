@@ -93,7 +93,7 @@ async def uppdate_user(
 
 
         con.commit()
-        return user
+        return user.id
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to update user: {e}")
