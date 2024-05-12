@@ -15,11 +15,17 @@ class ShortItem:
     id: UUID
     name: str
     photo: str
+    town : str
+    condition: str
+    category: str
 
-    def __init__(self, id: UUID, name: str, photo: str):
+    def __init__(self, id: UUID, name: str, photo: str, town:str,condition: str,category: str):
         self.id = id
         self.name = name
         self.photo = photo
+        self.town = town
+        self.condition=condition
+        self.category=category
 
 
 class CardItem:

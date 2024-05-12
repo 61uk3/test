@@ -9,7 +9,7 @@ from typing import Dict, List
 from dto import Item as DtoItem
 from dto.Item import CardItem, ShortItem
 
-from models.Models import Items, Towns
+from models.Models import Items, Towns, Users
 from models.Models import Photos
 from models.Models import Categories, Conditions
 
@@ -27,7 +27,18 @@ async def get_items(con: Session):
         f_p = str(photo.id_lots)
         s_p = str(photo.photo)
         photo_url = await get_photo(f"{f_p}/{s_p}")
-        ret_list.append(ShortItem(id=item.id, name=item.name, photo=photo_url))
+        user = con.query(Users).filter(Items.id_Users==Users.id).first()
+        town = str(con.query(Towns.town).filter(Towns.id == user.id_town).scalar())
+        cond =  str(con.query(Conditions.condition).filter(Conditions.id==item.id_Conditions).scalar())
+        cat =  str(con.query(Categories.category).filter(Categories.id == item.id_Categories).scalar())
+        ret_list.append(
+            ShortItem(
+                id=item.id,
+                name=item.name,
+                photo=photo_url,
+                town=town,
+                condition=cond,
+                category=cat))
     return ret_list
 
 
