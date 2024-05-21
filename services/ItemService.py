@@ -61,7 +61,7 @@ async def get_items_by_user_id(userId: UUID, con: Session):
                 town=town,
                 condition=cond,
                 category=cat))
-
+#добавила
     return ret_list
 
 
