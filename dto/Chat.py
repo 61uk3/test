@@ -1,9 +1,4 @@
-import datetime
-
 from uuid import UUID
-
-from pydantic import BaseModel
-
 
 class ShortChat:
     id: UUID

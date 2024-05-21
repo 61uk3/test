@@ -19,7 +19,13 @@ class ShortItem:
     condition: str
     category: str
 
-    def __init__(self, id: UUID, name: str, photo: str, town:str,condition: str,category: str):
+    def __init__(self,
+                 id: UUID,
+                 name: str,
+                 photo: str,
+                 town:str,
+                 condition: str,
+                 category: str):
         self.id = id
         self.name = name
         self.photo = photo

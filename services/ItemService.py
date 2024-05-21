@@ -48,7 +48,20 @@ async def get_items_by_user_id(userId: UUID, con: Session):
     for item in answered_list:
         photo = get_first_photo_by_id(item.id, con)
         photo_url = await get_photo(f"{photo.id_lots}/{photo.photo}")
-        ret_list.append(ShortItem(id=item.id, name=item.name, photo=photo_url))
+
+        user = con.query(Users).filter(Items.id_Users == userId).first()
+        town = str(con.query(Towns.town).filter(Towns.id == user.id_town).scalar())
+        cond = str(con.query(Conditions.condition).filter(Conditions.id == item.id_Conditions).scalar())
+        cat = str(con.query(Categories.category).filter(Categories.id == item.id_Categories).scalar())
+        ret_list.append(
+            ShortItem(
+                id=item.id,
+                name=item.name,
+                photo=photo_url,
+                town=town,
+                condition=cond,
+                category=cat))
+#добавила
     return ret_list
 
 
