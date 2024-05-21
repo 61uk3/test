@@ -53,24 +53,4 @@ class AnswerUser:
         self.photo=photo
         self.items=items
 
-class ResponseUser:
-    login: str
-    name: str
-    password: str
-    contact: str
-    datereg: str
-    id_town: uuid
-    items: list[ShortItem]
-
-    def __init__(self,
-    name: str,
-    contact: str,
-    datereg: str,
-    town: str,
-    items: list[ShortItem]):
-        self.name=name
-        self.contact=contact
-        self.datereg=datereg
-        self.town=town
-        self.items=items
 
