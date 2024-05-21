@@ -7,7 +7,7 @@ import json
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, UploadFile
 from database.PostgresDb import get_connection
-from dto.User import ResponseUser, UpUser, AnswerUser
+from dto.User import  UpUser, AnswerUser
 from models.Models import Users, Towns
 from services import UsersService,ItemService
 from services.ItemService import get_items_by_user_id,add_photos_to_item
