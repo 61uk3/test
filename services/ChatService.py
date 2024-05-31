@@ -76,15 +76,14 @@ async def from_lot(con:Session,
                    user_id:UUID):
     item = con.query(Items).filter(Items.id == lot_id).first()
     user = con.query(Users).filter(Users.id == user_id).first()
-    if con.query(Chats).filter((Chats.id_Lots == lot_id) and
-                               ((Chats.id_user1 == user_id)) and
-                               ((Chats.id_user2 == item.id_Users))).first():
+    chats = con.query(Chats).filter(Chats.id_Lots == lot_id).all()
+    chat = None
+    for chat_ in chats:
+        if chat_.id_user1==user_id:
+            chat = chat_
 
-        chat = con.query(Chats).filter((Chats.id_Lots == lot_id) and
-                               ((Chats.id_user1 == user_id)) and
-                               ((Chats.id_user2 == item.id_Users))).first()
-    else:
-        chat = await createchat(con, user_id, item.id_Users, lot_id)
+    if chat == None:
+            chat = await createchat(con, user_id, item.id_Users, lot_id)
 
     return await get_mes(con,chat.id,user)
 
