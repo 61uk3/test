@@ -18,8 +18,9 @@ con_dependency = Annotated[Session, Depends(get_connection)]
 
 
 @router.get('/', tags=['items'], response_model=None)
-async def get_items(con: con_dependency):
-    return await ItemServices.get_items(con)
+async def get_items(con: con_dependency,
+                    user: Users = Depends(get_current_user)):
+    return await ItemServices.get_items(user.id,con)
 
 # @router.post('/', tags=['items'])
 # async def post_item(

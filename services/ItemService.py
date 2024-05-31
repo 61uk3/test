@@ -19,8 +19,9 @@ from services.UsersService import get_user_by_id
 
 
 
-async def get_items(con: Session):
-    answered_list = con.query(Items).filter(Items.active == True).all()
+async def get_items(id: UUID,
+                    con: Session):
+    answered_list = con.query(Items).filter(Items.active == True and Items.id_Users!=id).all()
     ret_list = []
     for item in answered_list:
         photo = get_first_photo_by_id(item.id, con)
