@@ -15,8 +15,8 @@ from dto.User import RegUser, UpUser
 from models.Models import Users
 from models.Models import Towns
 from models.Models import Photos
-from services.AuthService import verify_jwt_token
-from services.MinioService import save_photo, delete_photos
+from services.AuthenticationService import verify_jwt_token
+from services.MinioService import delete_photos
 
 # используется для получения токена доступа
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth")
@@ -81,7 +81,6 @@ async def uppdate_user(
         town: str):
     try:
 
-        # Обновление значений пользователя
         user.name = new_user.name
         user.contact = new_user.contact
 

@@ -10,7 +10,7 @@ import services.UsersService as UserService
 from database.PostgresDb import get_connection
 from dto.User import AuthUser, RegUser
 from models.Models import Users
-from services.AuthService import *
+from services.AuthenticationService import *
 
 router = APIRouter()
 con_dependency = Annotated[Session, Depends(get_connection)]
