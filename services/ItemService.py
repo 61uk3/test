@@ -21,25 +21,26 @@ from services.UsersService import get_user_by_id
 
 async def get_items(id: UUID,
                     con: Session):
-    answered_list = con.query(Items).filter(Items.active == True and Items.id_Users!=id).all()
+    answered_list = con.query(Items).filter(Items.active == True).all()
     ret_list = []
     for item in answered_list:
-        photo = get_first_photo_by_id(item.id, con)
-        f_p = str(photo.id_lots)
-        s_p = str(photo.photo)
-        photo_url = await get_photo(f"{f_p}/{s_p}")
-        user = con.query(Users).filter(Items.id_Users==Users.id).first()
-        town = str(con.query(Towns.town).filter(Towns.id == user.id_town).scalar())
-        cond =  str(con.query(Conditions.condition).filter(Conditions.id==item.id_Conditions).scalar())
-        cat =  str(con.query(Categories.category).filter(Categories.id == item.id_Categories).scalar())
-        ret_list.append(
-            ShortItem(
-                id=item.id,
-                name=item.name,
-                photo=photo_url,
-                town=town,
-                condition=cond,
-                category=cat))
+        if item.id_Users!=id:
+            photo = get_first_photo_by_id(item.id, con)
+            f_p = str(photo.id_lots)
+            s_p = str(photo.photo)
+            photo_url = await get_photo(f"{f_p}/{s_p}")
+            user = con.query(Users).filter(Items.id_Users==Users.id).first()
+            town = str(con.query(Towns.town).filter(Towns.id == user.id_town).scalar())
+            cond =  str(con.query(Conditions.condition).filter(Conditions.id==item.id_Conditions).scalar())
+            cat =  str(con.query(Categories.category).filter(Categories.id == item.id_Categories).scalar())
+            ret_list.append(
+                ShortItem(
+                    id=item.id,
+                    name=item.name,
+                    photo=photo_url,
+                    town=town,
+                    condition=cond,
+                    category=cat))
     return ret_list
 
 
