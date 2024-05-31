@@ -77,12 +77,12 @@ async def from_lot(con:Session,
     item = con.query(Items).filter(Items.id == lot_id).first()
     user = con.query(Users).filter(Users.id == user_id).first()
     if con.query(Chats).filter((Chats.id_Lots == lot_id) and
-                               ((Chats.id_user1 == user_id) or Chats.id_user2 == user_id) and
-                               ((Chats.id_user1 == item.id_Users) or Chats.id_user2 == item.id_Users)).first():
+                               ((Chats.id_user1 == user_id)) and
+                               ((Chats.id_user2 == item.id_Users))).first():
 
         chat = con.query(Chats).filter((Chats.id_Lots == lot_id) and
-                               ((Chats.id_user1 == user_id) or Chats.id_user2 == user_id) and
-                               ((Chats.id_user1 == item.id_Users) or Chats.id_user2 == item.id_Users)).first()
+                               ((Chats.id_user1 == user_id)) and
+                               ((Chats.id_user2 == item.id_Users))).first()
     else:
         chat = await createchat(con, user_id, item.id_Users, lot_id)
 
