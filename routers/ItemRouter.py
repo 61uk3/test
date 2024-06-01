@@ -92,12 +92,14 @@ async def update_item(
         lot_json: str = Form(...),
         photos: List[UploadFile] = File(...),
         cat: str = Form(...),
-        cond: str = Form(...)):
+        cond: str = Form(...),
+        men: int = Form(...)):
     lotdata = json.loads(lot_json)
     lot = ItemDto.InputItem(**lotdata)
-    await ItemServices.update_item(con, id, lot, cat, cond)
+    await ItemServices.update_item(con, id, lot, cat, cond, men)
     # Добавление новых фотографий
-    await ItemServices.add_photos_to_item(con, id, photos)
+    if (men == 1):
+        await ItemServices.add_photos_to_item(con, id, photos)
 
     return {"message": "Item updated successfully"}
 

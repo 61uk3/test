@@ -78,7 +78,8 @@ async def uppdate_user(
         con:Session,
         user: Users,
         new_user:UpUser,
-        town: str):
+        town: str,
+        men:int):
     try:
 
         user.name = new_user.name
@@ -87,8 +88,9 @@ async def uppdate_user(
         town_id = con.query(Towns.id).filter(Towns.town == town).scalar()
         user.id_town = town_id
 
-        con.query(Photos).filter(Photos.id_lots == user.id).delete()
-        await delete_photos(user.id)
+        if (men==1):
+            con.query(Photos).filter(Photos.id_lots == user.id).delete()
+            await delete_photos(user.id)
 
 
         con.commit()
