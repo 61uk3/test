@@ -90,7 +90,7 @@ async def update_item(
         con: con_dependency,
         id: UUID,
         lot_json: str = Form(...),
-        photos: List[UploadFile] = File(...),
+        photos: List[UploadFile] = File(None),
         cat: str = Form(...),
         cond: str = Form(...),
         men: int = Form(...)):
