@@ -66,11 +66,12 @@ async def update_inf(
         con: con_dependency,
         user_json: str = Form(...),
         town: str = Form(...),
+        men: int = Form(...),
         user: Users = Depends(get_current_user)
 ):
     user_data = json.loads(user_json)
     user_new = UpUser(**user_data)
-    return await UsersService.uppdate_user(con,user,user_new,town)
+    return await UsersService.uppdate_user(con,user,user_new,town,men)
 
 @router.get('/', tags=['user'])
 async def get_user(con: con_dependency, user: Users = Depends(get_current_user)):

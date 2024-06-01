@@ -269,7 +269,7 @@ async def update_active(con: Session, item_id: UUID):
         raise HTTPException(status_code=500, detail=f"Failed to update item: {e}")
 
 
-async def update_item(con: Session, item_id: UUID, lot: DtoItem.InputItem, cat: str, cond: str):
+async def update_item(con: Session, item_id: UUID, lot: DtoItem.InputItem, cat: str, cond: str, men: int):
     try:
         item = con.query(Items).filter(Items.id == item_id).first()
         if item is None:
@@ -287,8 +287,9 @@ async def update_item(con: Session, item_id: UUID, lot: DtoItem.InputItem, cat: 
         item.id_Categories = idcat
         item.id_Conditions = idcon
 
-        con.query(Photos).filter(Photos.id_lots == item_id).delete()
-        await delete_photos(item_id)
+        if (men==1):
+            con.query(Photos).filter(Photos.id_lots == item_id).delete()
+            await delete_photos(item_id)
 
         con.commit()
         return item_id
