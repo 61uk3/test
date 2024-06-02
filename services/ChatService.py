@@ -38,23 +38,23 @@ async def get_chats(con:Session,
         f_p = str(photo.id_lots)
         s_p = str(photo.photo)
         photo_url = await get_photo(f"{f_p}/{s_p}")
-    try:
-        # Создаем объект ShortChat
-            short_chat = ShortChat(
-                id=chat.id,
-                photo_lots= photo_url,
-                name_lots=lot_info.name,
-                last_message=last_message.message,
-                date=str(last_message.date),
-                sender_name= sender.name
-            )
+        try:
+            # Создаем объект ShortChat
+                short_chat = ShortChat(
+                    id=chat.id,
+                    photo_lots= photo_url,
+                    name_lots=lot_info.name,
+                    last_message=last_message.message,
+                    date=str(last_message.date),
+                    sender_name= sender.name
+                )
 
-            # Добавляем short_chat в список
-            chats_list.append(short_chat)
+                # Добавляем short_chat в список
+                chats_list.append(short_chat)
+        except Exception as e:
+         raise HTTPException(status_code=500, detail=f"Failed to send message: {e}")
+    return chats_list
 
-            return chats_list
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to send message: {e}")
 
 async def createchat(con:Session,
                id1:UUID,
