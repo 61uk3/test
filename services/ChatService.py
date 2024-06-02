@@ -29,11 +29,11 @@ async def get_chats(con:Session,
     for chat in user_chats:
         # Получаем последнее сообщение в чате
         chat_id=chat.id
-        last_message = con.query(Messages).filter(Messages.id_Chats == chat_id).order_by(Messages.date.desc()).all()
+        last_message = con.query(Messages).filter(Messages.id_Chats == chat_id).order_by(Messages.date.desc()).first()
 
         # Получаем информацию о лоте
         lot_info = con.query(Items).filter(Items.id == chat.id_Lots).first()
-        sender = con.query(Users.name).filter(last_message[0].id_sender == Users.id).scalar()
+        sender = con.query(Users.name).filter(last_message.id_sender == Users.id).scalar()
 
         photo = get_first_photo_by_id(lot_info.id, con)
         f_p = str(photo.id_lots)
@@ -45,8 +45,8 @@ async def get_chats(con:Session,
                     id=chat.id,
                     photo_lots= photo_url,
                     name_lots=lot_info.name,
-                    last_message=last_message[0].message,
-                    date=str(last_message[0].date),
+                    last_message=last_message.message,
+                    date=str(last_message.date),
                     sender_name= sender
                 )
 
@@ -97,7 +97,7 @@ async def send(con:Session,
         item = con.query(Items).filter(Items.id == lot_id).first()
         user = con.query(Users).filter(Users.id == user_id).first()
         # Проверить, существует ли чат для данного лота
-        if con.query(Chats).filter(Chats.id_Lots == lot_id).first():
+        if con.query(Chats).filter(Chats.id_Lots == lot_id and Chats.id_user1 == user_id).first():
             chat = con.query(Chats).filter(Chats.id_Lots == lot_id and Chats.id_user1 == user_id).first()
         else:
             chat = await createchat(con,user.id,item.id_Users,lot_id)
