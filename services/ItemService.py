@@ -68,7 +68,7 @@ async def get_items_by_user_id(userId: UUID, con: Session):
 
 
 async def delete_item(id: UUID, con: Session, userId: UUID):
-    con.query(Items).filter(Items.id == id and Items.id_Users == userId).delete()
+    con.query(Items).filter(Items.id == id, Items.id_Users == userId).delete()
     con.query(Photos).filter(Photos.id_lots == id).delete()
     con.commit()
     await delete_photos(id)
