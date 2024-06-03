@@ -97,8 +97,8 @@ async def send(con:Session,
         item = con.query(Items).filter(Items.id == lot_id).first()
         user = con.query(Users).filter(Users.id == user_id).first()
         # Проверить, существует ли чат для данного лота
-        if con.query(Chats).filter(Chats.id_Lots == lot_id and Chats.id_user1 == user_id).first():
-            chat = con.query(Chats).filter(Chats.id_Lots == lot_id and Chats.id_user1 == user_id).first()
+        if con.query(Chats).filter(Chats.id_Lots == lot_id , Chats.id_user1 == user_id).first():
+            chat = con.query(Chats).filter(Chats.id_Lots == lot_id, Chats.id_user1 == user_id).first()
         else:
             chat = await createchat(con,user.id,item.id_Users,lot_id)
 
