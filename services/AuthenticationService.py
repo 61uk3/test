@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
-
+import os
 import jwt
 
-SECRET_KEY = "my_secret_key"
+SECRET_KEY = str(os.getenv('SECRET_KEY'))
 ALGORITHM = "HS256"
 EXPIRATION_TIME = timedelta(days=30)
 
