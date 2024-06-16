@@ -1,24 +1,20 @@
 from typing import Annotated
 from uuid import UUID
-from typing import Dict, List
-from fastapi import APIRouter, Depends
-from fastapi import APIRouter, Depends, File, Form, HTTPException
+from typing import List
+from fastapi import APIRouter, Depends, File, Form
 import json
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, UploadFile
+from fastapi import UploadFile
 from database.PostgresDb import get_connection
 from dto.User import  UpUser, AnswerUser
 from models.Models import Users, Towns
-from services import UsersService,ItemService
+from services import UsersService
 from services.ItemService import get_items_by_user_id,add_photos_to_item
 from services.ItemsPhotosService import get_first_photo_by_id
 from services.MinioService import get_photo
 from services.UsersService import get_current_user
-
 router = APIRouter()
 con_dependency = Annotated[Session, Depends(get_connection)]
-
-
 @router.get('/{id}', tags=['user'])
 async def get_user(con: con_dependency, id: UUID):
     items = await get_items_by_user_id(id, con)
@@ -35,23 +31,6 @@ async def get_user(con: con_dependency, id: UUID):
         town= con.query(Towns).filter(user.id_town == Towns.id).scalar(),
         items=items
     )
-
-
-# @router.post('/', tags=['items'])
-# async def post_item(
-#         con: con_dependency,
-#         lot_json: str = Form(...),
-#         cat: str = Form(...),
-#         cond: str = Form(...),
-#         user: Users = Depends(get_current_user)
-# ):
-#     lotdata = json.loads(lot_json)
-#     lot = ItemDto.InputItem(**lotdata)
-#
-#     item_id = await ItemServices.create_item(con, lot, user.id, cat, cond)
-#
-#     return item_id
-#
 @router.post('/{id}/photos', tags=['user'])
 async def post_photos_for_item(
         con: con_dependency,
@@ -60,7 +39,6 @@ async def post_photos_for_item(
 ):
     await add_photos_to_item(con, id, photos)
     return {"message": "Photos added successfully"}
-
 @router.post('/up/',tags=['user'])
 async def update_inf(
         con: con_dependency,
@@ -72,7 +50,6 @@ async def update_inf(
     user_data = json.loads(user_json)
     user_new = UpUser(**user_data)
     return await UsersService.uppdate_user(con,user,user_new,town,men)
-
 @router.get('/', tags=['user'])
 async def get_user(con: con_dependency, user: Users = Depends(get_current_user)):
     items = await get_items_by_user_id(user.id, con)
@@ -88,24 +65,3 @@ async def get_user(con: con_dependency, user: Users = Depends(get_current_user))
         town= con.query(Towns).filter(user.id_town == Towns.id).scalar(),
         items=items
     )
-
-
-    # /@router.put('/{id}',tags=['items'])
-    # user_data = json.loads(user_json)
-    # user = RegUser(**user_data)
-    # user.password = pwd_context.hash(user.password)
-    # return await UserService.register_user(user, town, photo, con)
-# async def update_item(
-#         con: con_dependency,
-#         id: UUID,
-#         lot_json: str = Form(...),
-#         photos: List[UploadFile] = File(...),
-#         cat: str = Form(...),
-#         cond: str = Form(...)):
-#     lotdata = json.loads(lot_json)
-#     lot = ItemDto.InputItem(**lotdata)
-#     await ItemServices.update_item(con, id, lot, cat, cond)
-#     # Добавление новых фотографий
-#     await ItemServices.add_photos_to_item(con, id, photos)
-#
-#     return {"message": "Item updated successfully"}
